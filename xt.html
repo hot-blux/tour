@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="en" class="light-style layout-menu-fixed layout-compact" dir="ltr" data-theme="theme-default" data-assets-path="https://cdn-bt4team.vercel.app/assets/" data-template="horizontal-menu-template-no-customizer" data-style="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <title><?php echo $category['name']; ?> Matches | <?php echo $server_name; ?></title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="https://cdn-bt4team.vercel.app/assets/img/favicon/favicon.ico" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdn-bt4team.vercel.app/assets/vendor/fonts/fontawesome.css" />
+    <link rel="stylesheet" href="https://cdn-bt4team.vercel.app/assets/vendor/fonts/tabler-icons.css" />
+    <link rel="stylesheet" href="https://cdn-bt4team.vercel.app/assets/vendor/fonts/flag-icons.css" />
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="https://cdn-bt4team.vercel.app/assets/vendor/css/rtl/core.css" />
+    <link rel="stylesheet" href="https://cdn-bt4team.vercel.app/assets/vendor/css/rtl/theme-default.css" />
+    <link rel="stylesheet" href="https://cdn-bt4team.vercel.app/assets/css/demo.css" />
+
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="https://cdn-bt4team.vercel.app/assets/vendor/libs/node-waves/node-waves.css" />
+    <link rel="stylesheet" href="https://cdn-bt4team.vercel.app/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+    <link rel="stylesheet" href="https://cdn-bt4team.vercel.app/assets/vendor/libs/typeahead-js/typeahead.css" />
+    <link rel="stylesheet" href="https://cdn-bt4team.vercel.app/assets/vendor/libs/apex-charts/apex-charts.css" />
+    <link rel="stylesheet" href="https://cdn-bt4team.vercel.app/assets/vendor/libs/swiper/swiper.css" />
+    <link rel="stylesheet" href="https://cdn-bt4team.vercel.app/assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css" />
+    <link rel="stylesheet" href="https://cdn-bt4team.vercel.app/assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css" />
+    <link rel="stylesheet" href="https://cdn-bt4team.vercel.app/assets/vendor/libs/datatables-checkboxes-jquery/datatables.checkboxes.css" />
+
+    <!-- Page CSS -->
+    <link rel="stylesheet" href="https://cdn-bt4team.vercel.app/assets/vendor/css/pages/cards-advance.css" />
+
+    <!-- Helpers -->
+    <script src="https://cdn-bt4team.vercel.app/assets/vendor/js/helpers.js"></script>
+    
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script src="https://cdn-bt4team.vercel.app/assets/js/config.js"></script>
+    
+    <style>
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #fff;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        
+        .bottom-nav .nav-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            color: #6c757d;
+        }
+        
+        .bottom-nav .nav-link.active {
+            color: #696cff;
+        }
+        
+        .bottom-nav .nav-link i {
+            font-size: 1.2rem;
+            padding: 2px;
+        }
+        
+        .bottom-nav .nav-link span {
+            font-size: 0.75rem;
+            margin-top: 5px;
+        }
+        
+        .match-card {
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .match-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .category-header {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .prize-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .prize-popup-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 400px;
+        }
+        
+        .prize-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .prize-item:last-child {
+            border-bottom: none;
+        }
+        
+        .countdown {
+            text-align: center;
+            font-weight: bold;
+            color: #696cff;
+            margin: 10px 0;
+        }
+    </style>
+  </head>
+
+  <body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Layout wrapper -->
+    <div class="layout-wrapper layout-navbar-full layout-horizontal layout-without-menu">
+      <div class="layout-container">
+        <!-- Layout container -->
+        <div class="layout-page">
+          <!-- Content wrapper -->
+          <div class="content-wrapper">
+            <!-- Content -->
+            
+            <div class="container-xxl flex-grow-1 container-p-y pb-7">
+                <!-- Category Header -->
+                <div class="category-header">
+                    <div class="d-flex align-items-center">
+                        <button class="btn btn-outline-secondary btn-sm me-3" onclick="window.location.href='index.php'">
+                            <i class="fas fa-arrow-left"></i> Back
+                        </button>
+                        <div class="flex-grow-1">
+                            <h3 class="mb-1"><?php echo $category['name']; ?></h3>
+                            <p class="text-muted mb-0">Available matches</p>
+                        </div>
+                        <?php if ($category['image_url']): ?>
+                        <img src="<?php echo $category['image_url']; ?>" class="img-thumbnail" style="max-width: 60px; max-height: 60px;" alt="<?php echo $category['name']; ?>">
+                        <?php endif; ?>
+                    </div>
+                </div>
+                
+                <!-- Matches -->
+                <div class="row g-4" id="matchesContainer">
+                    <!-- Matches will be loaded here -->
+                </div>
+            </div>
+            <!--/ Content -->
+
+            <!-- Footer -->
+            <footer class="content-footer footer bg-footer-theme">
+              <div class="container-xxl">
+                <div
+                  class="footer-container d-flex align-items-center justify-content-between py-4 flex-md-row flex-column">
+                  <div class="text-body">
+                    © Copyright <a href="#" target="_blank" class="footer-link"><?php echo $server_name; ?></a> 
+                    <script>
+                      document.write(new Date().getFullYear());
+                    </script>
+                  </div>
+                </div>
+              </div>
+            </footer>
+            <!-- / Footer -->
+
+            <div class="content-backdrop fade"></div>
+          </div>
+          <!--/ Content wrapper -->
+        </div>
+
+        <!--/ Layout container -->
+      </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <ul class="nav nav-justified">
+            <li class="nav-item">
+                <a class="nav-link active" href="index.php">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="my_matches.php">
+                    <i class="fas fa-gamepad"></i>
+                    <span>My Matches</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="results.php">
+                    <i class="fas fa-trophy"></i>
+                    <span>Results</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="profile.php">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Prize Popup -->
+    <div class="prize-popup" id="prizePopup">
+        <div class="prize-popup-content">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4>Prize Distribution</h4>
+                <button class="btn btn-sm btn-outline-secondary" id="closePrizePopup">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="prizePopupContent">
+                <!-- Prize details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="layout-overlay layout-menu-toggle"></div>
+
+    <!-- Drag Target Area To SlideIn Menu On Small Screens -->
+    <div class="drag-target"></div>
+
+    <!--/ Layout wrapper -->
+
+    <!-- Core JS -->
+    <!-- build:js assets/vendor/js/core.js -->
+
+    <script src="https://cdn-bt4team.vercel.app/assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="https://cdn-bt4team.vercel.app/assets/vendor/libs/popper/popper.js"></script>
+    <script src="https://cdn-bt4team.vercel.app/assets/vendor/js/bootstrap.js"></script>
+    <script src="https://cdn-bt4team.vercel.app/assets/vendor/libs/node-waves/node-waves.js"></script>
+    <script src="https://cdn-bt4team.vercel.app/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="https://cdn-bt4team.vercel.app/assets/vendor/libs/hammer/hammer.js"></script>
+    <script src="https://cdn-bt4team.vercel.app/assets/vendor/libs/i18n/i18n.js"></script>
+    <script src="https://cdn-bt4team.vercel.app/assets/vendor/libs/typeahead-js/typeahead.js"></script>
+    <script src="https://cdn-bt4team.vercel.app/assets/vendor/js/menu.js"></script>
+
+    <!-- endbuild -->
+
+    <!-- Vendors JS -->
+    <script src="https://cdn-bt4team.vercel.app/assets/vendor/libs/apex-charts/apexcharts.js"></script>
+    <script src="https://cdn-bt4team.vercel.app/assets/vendor/libs/swiper/swiper.js"></script>
+    <script src="https://cdn-bt4team.vercel.app/assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js"></script>
+
+    <!-- Main JS -->
+    <script src="https://cdn-bt4team.vercel.app/assets/js/main.js"></script>
+
+    <!-- Page JS -->
+    <script src="https://cdn-bt4team.vercel.app/assets/js/dashboards-analytics.js"></script>
+  </body>
+
+  <!-- Telegram WebApp API -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <script>
+        let telegramWebApp;
+        let currentUser = null;
+        let categoryId = <?php echo $category_id; ?>;
+        let matchData = null;
+        let countdownInterval = null;
+        
+        // Initialize Telegram Web App
+        function initializeTelegramApp() {
+            // Check if Telegram WebApp is available
+            if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp) {
+                telegramWebApp = window.Telegram.WebApp;
+                telegramWebApp.ready();
+                telegramWebApp.expand();
+                
+                // Get user data from Telegram
+                const user = telegramWebApp.initDataUnsafe?.user;
+                
+                if (user && user.id) {
+                    initializeUser(user);
+                } else {
+                    showError('No user data available from Telegram');
+                }
+            } else {
+                showError('This app can only be accessed through Telegram');
+            }
+        }
+        
+        // Initialize user in database
+        function initializeUser(user) {
+            $.ajax({
+                url: 'api/user.php',
+                type: 'POST',
+                data: {
+                    action: 'init',
+                    telegram_id: user.id,
+                    username: user.username,
+                    first_name: user.first_name,
+                    last_name: user.last_name,
+                    photo_url: user.photo_url
+                },
+                success: function(response) {
+                    currentUser = response.data;
+                    hideLoading();
+                    loadMatches();
+                },
+                error: function() {
+                    showError('Failed to initialize user');
+                }
+            });
+        }
+        
+        // Load matches for this category
+        function loadMatches() {
+            showLoading();
+            
+            $.ajax({
+                url: 'api/matches.php',
+                type: 'GET',
+                data: { 
+                    category_id: categoryId,
+                    user_id: currentUser ? currentUser.id : null
+                },
+                success: function(response) {
+                    hideLoading();
+                    
+                    const matches = response.data;
+                    const container = document.getElementById('matchesContainer');
+                    
+                    if (matches.length > 0) {
+                        matches.forEach(match => {
+                            const col = document.createElement('div');
+                            col.className = 'col-12';
+                            
+                            const matchType = match.type.charAt(0).toUpperCase() + match.type.slice(1);
+                            const version = match.version.charAt(0).toUpperCase() + match.version.slice(1);
+                            const entryFee = match.is_free == 1 ? 'Free' : match.entry_fee + ' BDT';
+                            
+                            // Check if user has joined this match
+                            const hasJoined = match.user_joined > 0;
+                            const joinedBadge = hasJoined ? 
+                                '<span class="badge bg-success">Joined</span>' : 
+                                '<span class="badge bg-secondary">Not Joined</span>';
+                            
+                            col.innerHTML = `
+                                <div class="card match-card" onclick="window.location.href='match_details.php?id=${match.id}'">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <h5 class="card-title">${match.title}</h5>
+                                                <p class="card-text">
+                                                    <small class="text-muted">${matchType} | ${version} | ${match.map || 'N/A'}</small><br>
+                                                    <small class="text-muted">Entry Fee: ${entryFee}</small><br>
+                                                    <small class="text-muted">Prize Pool: ${match.prize_pool} BDT</small><br>
+                                                    <small class="text-muted">Time: ${new Date(match.match_time).toLocaleString()}</small>
+                                                </p>
+                                            </div>
+                                            ${match.image_url ? `<img src="${match.image_url}" class="img-thumbnail" style="max-width: 80px; max-height: 80px;" alt="${match.title}">` : ''}
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center mt-2">
+                                            <span class="badge bg-primary">${match.registered_count}/${match.max_players} Players</span>
+                                            <span class="badge ${match.status === 'upcoming' ? 'bg-success' : match.status === 'live' ? 'bg-warning' : 'bg-secondary'}">${match.status.toUpperCase()}</span>
+                                        </div>
+                                        
+                                        <hr>
+                                        
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <button class="btn btn-sm btn-outline-primary" onclick="event.stopPropagation(); showPrizePopup(${match.id})">
+                                                <i class="fas fa-trophy"></i> Prize Pool
+                                            </button>
+                                            <div>
+                                                ${hasJoined ? 
+                                                    '<span class="badge bg-success"><i class="fas fa-check-circle"></i> Joined</span>' : 
+                                                    '<span class="badge bg-secondary"><i class="fas fa-times-circle"></i> Not Joined</span>'}
+                                            </div>
+                                        </div>
+                                        
+                                        <hr>
+                                        
+                                        <div class="countdown" id="countdown-${match.id}">
+                                            Loading...
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                            
+                            container.appendChild(col);
+                            
+                            // Start countdown for this match
+                            startCountdown(match.id, match.match_time);
+                        });
+                    } else {
+                        container.innerHTML = '<div class="col-12"><div class="alert alert-info">No matches found for this category.</div></div>';
+                    }
+                },
+                error: function() {
+                    hideLoading();
+                    showError('Failed to load matches');
+                }
+            });
+        }
+        
+        // Show loading
+        function showLoading() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+        
+        // Hide loading
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+        
+        // Show error message
+        function showError(message) {
+            hideLoading();
+            alert(message);
+        }
+        
+        // Show prize popup
+        function showPrizePopup(matchId) {
+            // Fetch match details for prize information
+            $.ajax({
+                url: 'api/match_details.php',
+                type: 'GET',
+                data: { 
+                    id: matchId,
+                    user_id: currentUser ? currentUser.id : null
+                },
+                success: function(response) {
+                    matchData = response.data;
+                    const popup = document.getElementById('prizePopup');
+                    const content = document.getElementById('prizePopupContent');
+                    
+                    // Calculate total prize pool
+                    let totalPrize = 0;
+                    if (matchData.first_prize) totalPrize += parseFloat(matchData.first_prize);
+                    if (matchData.second_prize) totalPrize += parseFloat(matchData.second_prize);
+                    if (matchData.third_prize) totalPrize += parseFloat(matchData.third_prize);
+                    if (matchData.fourth_prize) totalPrize += parseFloat(matchData.fourth_prize);
+                    if (matchData.fifth_prize) totalPrize += parseFloat(matchData.fifth_prize);
+                    
+                    let html = `
+                        <div class="prize-item">
+                            <span><strong>Total Prize Pool</strong></span>
+                            <span><strong>${matchData.prize_pool} BDT</strong></span>
+                        </div>
+                    `;
+                    
+                    // Add individual prizes if they exist and are not 0
+                    if (matchData.first_prize && parseFloat(matchData.first_prize) > 0) {
+                        html += `
+                            <div class="prize-item">
+                                <span>1st Prize</span>
+                                <span>${matchData.first_prize} BDT</span>
+                            </div>
+                        `;
+                    }
+                    
+                    if (matchData.second_prize && parseFloat(matchData.second_prize) > 0) {
+                        html += `
+                            <div class="prize-item">
+                                <span>2nd Prize</span>
+                                <span>${matchData.second_prize} BDT</span>
+                            </div>
+                        `;
+                    }
+                    
+                    if (matchData.third_prize && parseFloat(matchData.third_prize) > 0) {
+                        html += `
+                            <div class="prize-item">
+                                <span>3rd Prize</span>
+                                <span>${matchData.third_prize} BDT</span>
+                            </div>
+                        `;
+                    }
+                    
+                    if (matchData.fourth_prize && parseFloat(matchData.fourth_prize) > 0) {
+                        html += `
+                            <div class="prize-item">
+                                <span>4th Prize</span>
+                                <span>${matchData.fourth_prize} BDT</span>
+                            </div>
+                        `;
+                    }
+                    
+                    if (matchData.fifth_prize && parseFloat(matchData.fifth_prize) > 0) {
+                        html += `
+                            <div class="prize-item">
+                                <span>5th Prize</span>
+                                <span>${matchData.fifth_prize} BDT</span>
+                            </div>
+                        `;
+                    }
+                    
+                    if (matchData.per_kill_prize && parseFloat(matchData.per_kill_prize) > 0) {
+                        html += `
+                            <div class="prize-item">
+                                <span>Per Kill</span>
+                                <span>${matchData.per_kill_prize} BDT</span>
+                            </div>
+                        `;
+                    }
+                    
+                    content.innerHTML = html;
+                    popup.style.display = 'flex';
+                },
+                error: function() {
+                    showError('Failed to load match details');
+                }
+            });
+        }
+        
+        // Close prize popup
+        document.getElementById('closePrizePopup').addEventListener('click', function() {
+            document.getElementById('prizePopup').style.display = 'none';
+        });
+        
+        // Close prize popup when clicking outside
+        document.getElementById('prizePopup').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.style.display = 'none';
+            }
+        });
+        
+        // Start countdown for a match
+        function startCountdown(matchId, matchTime) {
+            const countdownElement = document.getElementById(`countdown-${matchId}`);
+            
+            const interval = setInterval(function() {
+                const now = new Date().getTime();
+                const matchDateTime = new Date(matchTime).getTime();
+                const distance = matchDateTime - now;
+                
+                if (distance < 0) {
+                    clearInterval(interval);
+                    countdownElement.innerHTML = "Match has started";
+                    return;
+                }
+                
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                
+                let timeString = "Start In: ";
+                if (days > 0) timeString += days + "d ";
+                if (hours > 0) timeString += hours + "h ";
+                if (minutes > 0) timeString += minutes + "m ";
+                timeString += seconds + "s";
+                
+                countdownElement.innerHTML = timeString;
+            }, 1000);
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTelegramApp();
+        });
+    </script>
+</html>
